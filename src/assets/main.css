@@ -1,35 +1,71 @@
-@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+:root {
+    --cover-green: #24402f;
+    --cover-green-dark: #17291d;
+    --paper: #f2f4ed;
+    --paper-line: #d8dccb;
+    --card: #ffffff;
+    --ink: #1c2b2a;
+    --ink-soft: #5a6b64;
+    --present: #3f7a5d;
+    --present-bg: #e3ede4;
+    --absent: #a83a3a;
+    --absent-bg: #f4e3e1;
+    --accent-gold: #b8933f;
+    --font-display: 'Zilla Slab', serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --shadow-sm: 0 1px 2px rgba(28, 43, 42, 0.06), 0 1px 1px rgba(28, 43, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(28, 43, 42, 0.08), 0 2px 4px rgba(28, 43, 42, 0.05);
+    --radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
+    min-height: 100vh;
     display: flex;
-    place-items: center;
-  }
+    flex-direction: column;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+h1,
+h2,
+h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin: 0 0 0.5em;
+    letter-spacing: -0.01em;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+a {
+    color: inherit;
+}
+
+button {
+    font-family: var(--font-body);
+    cursor: pointer;
+}
+
+
+/* Reusable "card" surface used across pages */
+
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--paper-line);
+    box-shadow: var(--shadow-sm);
 }

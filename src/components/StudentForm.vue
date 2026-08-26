@@ -14,7 +14,7 @@
     const name = ref('')
     const className = ref('')
 
-    function handleSummit(){
+    function handleSubmit(){
         emit('add-student', {name: name.value, className: className.value})
         name.value = ''
         className.value = ''

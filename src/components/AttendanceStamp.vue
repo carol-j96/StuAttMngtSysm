@@ -1,5 +1,8 @@
 <template>
-    <button class="stamp" @click="$emit('toggle')"> 
+    <button 
+    class="stamp" 
+    :class="{ present: status === 'present', absent: status === 'absent'}"
+    @click="$emit('toggle')"> 
         {{label}}
         </button>
 </template>
@@ -35,5 +38,17 @@ import {computed} from 'vue'
     }
     .stamp:hover {
         transform: rotate(0deg) scale(1.03);
+    }
+
+    .stamp.present {
+        border-color: var(--present);
+        color: var(--present);
+        background: var(--present-bg);
+    }
+
+    .stamp.absent {
+        border-color: var(--absent);
+        color: var(--absent);
+        background: var(--absent-bg);
     }
 </style>

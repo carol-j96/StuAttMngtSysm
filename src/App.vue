@@ -5,6 +5,7 @@
             <router-link to="/">Dashboard</router-link>
             <router-link to="/students">Students</router-link>
             <router-link to="/attendance">Attendance</router-link>
+            <router-link to="/reports">Reports</router-link>
         </nav>
     </header>
 
