@@ -1,7 +1,7 @@
 <template>
     <button 
     class="stamp" 
-    :class="{ present: status === 'present', absent: status === 'absent'}"
+    :class="{ present: status === 'present', late: status === 'late', absent: status === 'absent'}"
     @click="$emit('toggle')"> 
         {{label}}
         </button>
@@ -17,6 +17,7 @@ import {computed} from 'vue'
 
     const label= computed(()=>{
         if(props.status==='present') return 'PRESENT'
+        if(props.status==='late') return 'LATE'
         if(props.status==='absent') return 'ABSENT'
         return 'MARK'
     })
@@ -30,10 +31,9 @@ import {computed} from 'vue'
         letter-spacing: 0.05rem;
         padding: 0.4rem 0.75rem;
         border-radius: 3px;
-        border: 2px dashed var(--paper-line);
+        border: 2px dashed var(--border);
         background: transparent;
         color: var(--ink-soft);
-        transform: rotate(-2deg);
         transition: transform 0.12s ease;
     }
     .stamp:hover {
@@ -44,6 +44,12 @@ import {computed} from 'vue'
         border-color: var(--present);
         color: var(--present);
         background: var(--present-bg);
+    }
+
+    .stamp.late {
+        border-color: var(--late);
+        color: var(--late);
+        background: var(--late-bg);
     }
 
     .stamp.absent {

@@ -1,10 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+/* Light theme (default) */
+
 :root {
-    --cover-green: #24402f;
-    --cover-green-dark: #17291d;
-    --paper: #f2f4ed;
-    --paper-line: #d8dccb;
+    --bg: #f2f4ed;
+    --sidebar-bg: #1f3327;
+    --sidebar-text: #dce5da;
+    --sidebar-text-active: #ffffff;
     --card: #ffffff;
+    --border: #d8dccb;
     --ink: #1c2b2a;
     --ink-soft: #5a6b64;
     --present: #3f7a5d;
@@ -12,6 +16,8 @@
     --absent: #a83a3a;
     --absent-bg: #f4e3e1;
     --accent-gold: #b8933f;
+    --late: #b8862f;
+    --late-bg: #f5ebd6;
     --font-display: 'Zilla Slab', serif;
     --font-body: 'Inter', system-ui, sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
@@ -20,22 +26,44 @@
     --radius: 10px;
 }
 
+
+/* Dark theme override — applied when <html data-theme="dark"> */
+
+[data-theme='dark'] {
+    --bg: #14181a;
+    --sidebar-bg: #0d1210;
+    --sidebar-text: #9aa5a0;
+    --sidebar-text-active: #ffffff;
+    --card: #1c2225;
+    --border: #2b3236;
+    --ink: #e8ece9;
+    --ink-soft: #9aa5a0;
+    --present: #5fae86;
+    --present-bg: #1f2f27;
+    --absent: #d97575;
+    --absent-bg: #33201f;
+    --accent-gold: #d4af5f;
+    --late: #e0b25f;
+    --late-bg: #332a1a;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    background: var(--paper);
+    background: var(--bg);
     color: var(--ink);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 #app {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 h1,
@@ -60,12 +88,10 @@ button {
     cursor: pointer;
 }
 
-
-/* Reusable "card" surface used across pages */
-
 .card {
     background: var(--card);
     border-radius: var(--radius);
-    border: 1px solid var(--paper-line);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
+    transition: background 0.15s ease, border-color 0.15s ease;
 }

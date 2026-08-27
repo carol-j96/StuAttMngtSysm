@@ -3,6 +3,7 @@ import DashboardView from '../views/DashboardView.vue'
 import StudentsView from '../views/StudentsView.vue'
 import AttendanceView from '../views/AttendanceView.vue'
 import ReportsView from '../views/ReportsView.vue'
+import StudentProfileView from '../views/StudentProfileView.vue'
 
 
 // Each route maps a URL path to a component ("page").
@@ -14,6 +15,7 @@ const router = createRouter({
         { path: '/students', name: 'students', component: StudentsView },
         { path: '/attendance', name: 'attendance', component: AttendanceView },
         { path: '/reports', name: 'reports', component: ReportsView },
+        { path: '/students/:id', name: 'student-profile', component: StudentProfileView },
     ],
 })
 

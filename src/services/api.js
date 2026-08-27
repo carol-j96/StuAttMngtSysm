@@ -9,6 +9,7 @@
 
 const STUDENTS_KEY = 'attendance:students'
 const RECORDS_KEY = 'attendance:records' // { [date]: { [studentId]: 'present' | 'absent' } }
+const REMARKS_KEY = 'attendance:remarks'
 
 function readJSON(key, fallback) {
     const raw = localStorage.getItem(key)
@@ -23,22 +24,21 @@ function writeJSON(key, value) {
 // isn't empty on first load.
 if (!localStorage.getItem(STUDENTS_KEY)) {
     writeJSON(STUDENTS_KEY, [
-        { id: 1, name: 'Amina Yusuf', className: 'Grade 8A' },
-        { id: 2, name: 'Brian Otieno', className: 'Grade 8A' },
-        { id: 3, name: 'Grace Mwangi', className: 'Grade 8A' },
+        { id: 1, studentId: 'STU-1001', name: 'Amina Yusuf', className: 'Grade 8A' },
+        { id: 2, studentId: 'STU-1002', name: 'Brian Otieno', className: 'Grade 8A' },
+        { id: 3, studentId: 'STU-1003', name: 'Grace Mwangi', className: 'Grade 8A' },
     ])
 }
-
 // --- Students ---------------------------------------------------
 
 export function getStudents() {
     return readJSON(STUDENTS_KEY, [])
 }
 
-export function addStudent({ name, className }) {
+export function addStudent({ name, className, studentId }) {
     const students = getStudents()
     const nextId = students.length ? Math.max(...students.map((s) => s.id)) + 1 : 1
-    const student = { id: nextId, name, className }
+    const student = { id: nextId, studentId, name, className }
     students.push(student)
     writeJSON(STUDENTS_KEY, students)
     return student
@@ -63,6 +63,17 @@ export function setAttendanceStatus(date, studentId, status) {
     writeJSON(RECORDS_KEY, records)
 }
 
+export function getRemarksForDate(date) {
+    const remarks = readJSON(REMARKS_KEY, {})
+    return remarks[date] || {}
+}
+
+export function setRemark(date, studentId, remark) {
+    const remarks = readJSON(REMARKS_KEY, {})
+    if (!remarks[date]) remarks[date] = {}
+    remarks[date][studentId] = remark
+    writeJSON(REMARKS_KEY, remarks)
+}
 export function getAllRecords() {
     return readJSON(RECORDS_KEY, {})
 }
