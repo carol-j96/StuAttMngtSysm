@@ -6,23 +6,23 @@
             <tr>
                 <th>Name</th>
                 <th>Class</th>
-                <th>Present</th>
-                <th>Late</th>
                 <th>Total Marked</th>
-                <th>Attendance (%)</th>
+                <th>Present %</th>
+                <th>Late %</th>
+                <th>Absent %</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="student in studentStats" :key="student.id">
                 <td>{{ student.name }}</td>
                 <td class="mono">{{ student.className }}</td>
-                <td class="mono">{{ student.presentCount }}</td>
-                <td class="mono">{{ student.lateCount }}</td>
                 <td class="mono">{{ student.totalDays }}</td>
-                <td class="mono">{{ student.percentage }}</td>
+                <td class="mono">{{ student.presentPct }}%</td>
+                <td class="mono">{{ student.latePct }}%</td>
+                <td class="mono">{{ student.absentPct }}%</td>
             </tr>
             <tr v-if="studentStats.length === 0">
-                <td colspan="5" class="empty">No data yet.</td>
+                <td colspan="6" class="empty">No data yet.</td>
             </tr>
         </tbody>
     </table>
@@ -44,6 +44,7 @@
         return students.value.map((student) => {
             let presentCount = 0
             let lateCount = 0
+            let absentCount=0
             let totalDays = 0
 
             for(const date in allRecords.value) {
@@ -52,11 +53,15 @@
                     totalDays++
                     if (status === 'present') presentCount++
                     if (status === 'late') lateCount++
+                    if (status === 'absent') absentCount++
                 }
             }
 
-            const percentage = totalDays>0 ? Math.round((presentCount / totalDays)*100) : 0
-            return { ...student, presentCount, lateCount, totalDays, percentage}
+            const presentPct = totalDays>0 ? Math.round((presentCount / totalDays)*100) : 0
+            const latePct = totalDays>0 ? Math.round((lateCount / totalDays)*100) : 0
+            const absentPct = totalDays>0 ? Math.round((absentCount / totalDays)*100) : 0
+
+            return { ...student, presentCount, lateCount, absentCount, totalDays, presentPct, latePct, absentPct}
         })
     })
 </script>

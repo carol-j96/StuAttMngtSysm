@@ -9,8 +9,8 @@
   <label class="filter">
     Class:
     <select v-model="selectedClass">
-        <option v-for="c in classOptions" :key="c" :value="c">
-            {{ c === 'all' ? 'All classes' : c }}
+        <option v-for="c in classOptions" :key="c.id" :value="c.id">
+            {{ c.name }}
         </option>
     </select>
   </label>
@@ -27,7 +27,7 @@
     <tbody>
       <tr v-for="student in students" :key="student.id">
         <td>{{ student.name }}</td>
-        <td class="mono">{{ student.className }}</td>
+        <td class="mono">{{ student.classId }}</td>
         <td>
           <AttendanceStamp
             :status="records[student.id] || null"
@@ -45,14 +45,15 @@
     
 <script setup>
     import{ref, computed, onMounted} from 'vue'
-    import{getStudents, getAttendanceForDate, setAttendanceStatus, getRemarksForDate, setRemark} from '../services/api'
+    import{getStudents, getAttendanceForDate, setAttendanceStatus, getRemarksForDate, setRemark, getClasses, getClassName} from '../services/api'
     import AttendanceStamp from '../components/AttendanceStamp.vue'
     
     const students = ref([])
     const selectedDate = ref(new Date().toISOString().slice(0, 10)) 
     const records = ref({}) 
     const remarks = ref({})
-    const selectedOptions = ref('all')
+    const selectedClass = ref('all')
+    const classes = ref(getClasses())
     
     const classOptions = computed(() => {
         const unique = new Set(students.value.map((s) => s.className))

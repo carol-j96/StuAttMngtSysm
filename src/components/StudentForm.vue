@@ -2,7 +2,10 @@
     <form @submit.prevent="handleSubmit">
         <input v-model="studentId" type="text" placeholder="Student ID" required/>
         <input v-model="name" type="text" placeholder="Full name" required/>
-        <input v-model="className" type="text" placeholder="Class" required/>
+        <select v-model="classId" required>
+            <option value="" disabled>Select Option</option>
+            <option v-for="c in classes" :key="c.id" :value="c.id">{{ c.name }}</option>
+        </select>
         <button type="submit">Add Student</button>
     </form>
 </template>
@@ -11,16 +14,17 @@
     import { ref } from 'vue'
     
     const emit=defineEmits(['add-student'])
-
+    
+    const classes = ref(getClasses())
     const studentId = ref('')
     const name = ref('')
     const className = ref('')
 
     function handleSubmit(){
-        emit('add-student', {studentId: studentId.value, name: name.value, className: className.value})
+        emit('add-student', {studentId: studentId.value, name: name.value, classId: classId.value})
         studentId.value = ''
         name.value = ''
-        className.value = ''
+        classId.value = ''
     }
 </script>
 
@@ -52,5 +56,14 @@
 
     button:hover {
         opacity: 0.85;
+    }
+
+    select {
+        padding: 0;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 4px;
+        font-family: var(--font-body);
     }
 </style>
