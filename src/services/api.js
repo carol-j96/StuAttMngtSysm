@@ -43,7 +43,7 @@ export function getStudents() {
             { id: 3, studentId: 'STU-1003', name: 'Grace Mwangi', classId: 1 },
         ])
     }
-    return readJSON(STUDENTS_KEY, [])
+    return readJSON(key, [])
 }
 
 export function getClassName(classId) {
@@ -51,10 +51,10 @@ export function getClassName(classId) {
     return match ? match.name : 'Unknown class'
 }
 
-export function addStudent({ name, className, studentId }) {
+export function addStudent({ name, classId, studentId }) {
     const students = getStudents()
     const nextId = students.length ? Math.max(...students.map((s) => s.id)) + 1 : 1
-    const student = { id: nextId, studentId, name, className }
+    const student = { id: nextId, studentId, name, classId }
     students.push(student)
     writeJSON(scopedKey(STUDENTS_KEY), students)
     return student
@@ -75,7 +75,8 @@ export function getAttendanceForDate(date) {
 export function setAttendanceStatus(date, studentId, status) {
     const records = readJSON(scopedKey(RECORDS_KEY), {})
     if (!records[date]) records[date] = {}
-    records[date][studentId] = status.writeJSON(scopedKey(RECORDS_KEY), records)
+    records[date][studentId] = status
+    writeJSON(scopedKey(RECORDS_KEY), records)
 }
 
 export function getRemarksForDate(date) {
@@ -86,7 +87,8 @@ export function getRemarksForDate(date) {
 export function setRemark(date, studentId, remark) {
     const remarks = readJSON(scopedKey(REMARKS_KEY), {})
     if (!remarks[date]) remarks[date] = {}
-    remarks[date][studentId] = remark.writeJSON(scopedKey(REMARKS_KEY), remarks)
+    remarks[date][studentId] = remark
+    writeJSON(scopedKey(REMARKS_KEY), remarks)
 }
 
 export function getAllRecords() {
@@ -165,7 +167,7 @@ export function getClasses() {
     return readJSON(key, [])
 }
 
-export function addClasses({ name }) {
+export function addClass({ name }) {
     const classes = getClasses()
     const nextId = classes.length ? Math.max(...classes.map((c) => c.id)) + 1 : 1
     const newClass = { id: nextId, name }
@@ -174,7 +176,98 @@ export function addClasses({ name }) {
     return newClass
 }
 
-export function deleteCLass(id) {
+export function deleteClass(id) {
     const classes = getClasses().filter((c) => c.id !== id)
     writeJSON(scopedKey(CLASSES_KEY), classes)
+}
+
+export function getStudentByClass(classId) {
+    return getStudents().filter((s) => s.classId === classId)
+}
+
+export function getClassPercentage(classId, startDate, endDate) {
+    const studentIds = new Set(getStudentByClass(classId).map((s) => s.id))
+    const allRecords = getAllRecords()
+    let present = 0
+    let total = 0
+
+    for (const date in allRecords) {
+        if (startDate && date < startDate) continue
+        if (endDate && date > endDate) continue
+        const dayRecord = allRecords[date]
+        for (const studentId in dayRecord) {
+            if (!studentIds.has(Number(studentId))) continue
+            total++
+            if (dayRecord[studentId] === 'present') present++
+        }
+    }
+    return total > 0 ? Math.round((present / total) * 100) : 0
+}
+
+export function getWeekRange(dateStr) {
+    const d = new Date(dateStr)
+    const day = d.getDay()
+    const diffToMonday = day === 0 ? -6 : 1 - day
+    const monday = new Date(d)
+    monday.setDate(d.getDate() + diffToMonday)
+    const friday = new Date(monday)
+    friday.setDate(monday.getDate() + 4)
+    return {
+        start: monday.toISOString().slice(0, 10),
+        end: friday.toISOString().slice(0, 10),
+    }
+}
+
+export function getMonthWeeks(dateStr) {
+    const d = new Date(dateStr)
+    const year = d.getFullYear()
+    const month = d.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+
+    const weeks = []
+    const seen = new Set()
+    let cursor = new Date(firstDay)
+
+    while (cursor <= lastDay) {
+        const range = getWeekRange(cursor.toISOString().slice(0, 10))
+        const key = `${range.start}_${range.end}`
+        if (!seen.has(key)) {
+            seen.add(key)
+            weeks.push(range)
+        }
+        cursor.setDate(cursor.getDate() + 7)
+    }
+    return weeks
+}
+
+export function getTopStudents(classId, count, worst) {
+    const students = getStudentByClass(classId)
+    const allRecords = getAllRecords()
+
+    const stats = students
+        .map((s) => {
+            let present = 0
+            let total = 0
+            for (const date in allRecords) {
+                const status = allRecords[date][s.id]
+                if (status) {
+                    total++
+                    if (status === 'present') present++
+                }
+            }
+            const pct = total > 0 ? Math.round((present / total) * 100) : 0
+            return {...s, pct, total }
+        })
+        .filter((s) => s.total > 0)
+
+    stats.sort((a, b) => (worst ? a.pct - b.pct : b.pct - a.pct))
+    return stats.slice(0, count)
+}
+
+export function getTopClasses(count, worst) {
+    const classes = getClasses()
+    const stats = classes.map((c) => ({...c, pct: getClassPercentage(c.id) }))
+    stats.sort((a, b) => (worst ? a.pct - b.pct : b.pct - a.pct))
+    return stats.slice(0, count)
 }

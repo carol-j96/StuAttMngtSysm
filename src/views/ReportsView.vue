@@ -15,7 +15,7 @@
         <tbody>
             <tr v-for="student in studentStats" :key="student.id">
                 <td>{{ student.name }}</td>
-                <td class="mono">{{ student.className }}</td>
+                <td class="mono">{{ getClassName(student.classId) }}</td>
                 <td class="mono">{{ student.totalDays }}</td>
                 <td class="mono">{{ student.presentPct }}%</td>
                 <td class="mono">{{ student.latePct }}%</td>
@@ -30,7 +30,7 @@
 
 <script setup>
     import { ref, computed, onMounted } from 'vue'
-    import { getStudents, getAllRecords } from '../services/api'
+    import { getStudents, getAllRecords, getClassName } from '../services/api'
 
     const students = ref([])
     const allRecords = ref([])

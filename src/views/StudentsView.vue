@@ -30,7 +30,7 @@
       <tr v-for="student in filteredStudents" :key="student.id">
         <td class="mono">{{ student.studentId }}</td>
         <td>{{ student.name }}</td>
-        <td class="mono">{{ student.classId }}</td>
+        <td class="mono">{{ getClassName(student.classId) }}</td>
         <td class="actions-cell">
           <button class="actions-btn" @click="toggleMenu(student.id)">Actions</button>
 

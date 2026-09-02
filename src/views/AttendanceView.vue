@@ -27,7 +27,7 @@
     <tbody>
       <tr v-for="student in students" :key="student.id">
         <td>{{ student.name }}</td>
-        <td class="mono">{{ student.classId }}</td>
+        <td class="mono">{{ getClassName(student.classId) }}</td>
         <td>
           <AttendanceStamp
             :status="records[student.id] || null"
@@ -55,14 +55,12 @@
     const selectedClass = ref('all')
     const classes = ref(getClasses())
     
-    const classOptions = computed(() => {
-        const unique = new Set(students.value.map((s) => s.className))
-        return ['all', ...unique]
-    })
+    const classOptions = computed(() => [{ id: 'all', name:'All Classes' }, ...classes.value])
 
     const filteredStudents = computed(() => {
-        if (selectedClass.value === 'all') return students.value
-        return students.value.filter((s) => s.className === selectedClass.value)
+        if (selectedClass.value !== 'all') {
+            result = result.filter((s) => s.classId === selectedClass.value)
+        }
     })
 
     onMounted(()=>{

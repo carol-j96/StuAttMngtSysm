@@ -1,8 +1,10 @@
 <template>
   <div class="shell" v-if="showShell">
     <aside class="sidebar">
-      <h1 class="brand">Attendance<br />Register</h1>
+     
 
+      <h1 class="brand">Attendance<br />Register</h1>
+  
       <nav>
         <router-link to="/">Dashboard</router-link>
         <router-link to="/classes">Classes</router-link>
@@ -10,19 +12,7 @@
         <router-link to="/attendance">Attendance</router-link>
         <router-link to="/reports">Reports</router-link>
       </nav>
-
-      <div class="account" v-if="currentTeacher">
-        <button class="avatar-btn" @click="toggleMenu">
-          <span class="avatar">{{ initials }}</span>
-        </button>
-
-        <div v-if="menuOpen" class="account-menu">
-          <p class="menu-name">{{ currentTeacher.name }}</p>
-          <p class="menu-email mono">{{ currentTeacher.email }}</p>
-          <button class="menu-item" @click="handleLogout">Log out</button>
-        </div>
-      </div>
-
+     
       <label class="theme-switch">
         <span class="label-text">{{ isDark ? 'Dark Mode' : 'Light Mode' }}</span>
         <input type="checkbox" :checked="isDark" @change="toggleTheme" />
@@ -42,7 +32,7 @@
 <script setup>
   import { ref, computed, watch, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { getCurrentTeacher, logoutTeacher } from './services/api'
+  import { getCurrentTeacher, getTeachers, logoutTeacher } from './services/api'
 
   const route = useRoute()
   const router = useRouter()
@@ -63,6 +53,7 @@
   }
 
   onMounted(() => {
+    currentTeacher.value = getCurrentTeacher()
     const saved = localStorage.getItem('theme')
     isDark.value = saved === 'dark'
     applyTheme(isDark.value)
@@ -71,29 +62,6 @@
   watch(() => route.fullPath, () => {
     currentTeacher.value = getCurrentTeacher()
   })
-
-  const menuOpen = ref(false)
-
-  const initials = computed(() => {
-    if (!currentTeacher.value?.name) return ''
-    return currentTeacher.value.name
-      .split(' ')
-      .map((word) => word[0])
-      .slice(0, 2)
-      .join('')
-      .toUpperCase()
-  })
-
-  function toggleMenu() {
-    menuOpen.value = !menuOpen.value
-  }
-
-  function handleLogout() {
-    logoutTeacher()
-    currentTeacher.value = null
-    menuOpen.value = false
-    router.push('/login')
-  }
 </script>
 
 <style scoped>
@@ -111,6 +79,11 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
   }
 
   .brand {
@@ -188,84 +161,13 @@
   }
 
   .theme-switch input:checked + .track .thumb {
-     transform: translateX(18px);
+    transform: translateX(18px);
   }
 
   .page {
     flex: 1;
-    padding: 2rem;
+    margin-left: 220px;
+    padding: 2.5rem 2rem 2rem;
     max-width: 1000px;
-  }
-
-  .account {
-    position: relative;
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .avatar-btn {
-    background: none;
-    border: none;
-    padding: 0;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--accent-gold);
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
-
-  .account-menu {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    margin-bottom: 0.5rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: var(--shadow-md);
-    min-width: 180px;
-    overflow: hidden;
-    z-index: 10;
-  }
-
-  .menu-name {
-    padding: 0.7rem 0.9rem 0.1rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--ink);
-    margin: 0;
-  }
-
-  .menu-email {
-    padding: 0 0.9rem 0.6rem;
-    font-size: 0.75rem;
-    color: var(--ink-soft);
-    margin: 0;
-  }
-
-  .menu-item {
-    display: block;
-    width: 100%;
-    padding: 0.6rem 0.9rem;
-    background: none;
-    border: none;
-    border-top: 1px solid var(--border);
-    text-align: left;
-    color: var(--absent);
-    font-size: 0.85rem;
-    cursor: pointer;
- }
-
-  .menu-item:hover {
-    background: var(--absent-bg);
   }
 </style>

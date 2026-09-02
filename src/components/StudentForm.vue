@@ -3,7 +3,7 @@
         <input v-model="studentId" type="text" placeholder="Student ID" required/>
         <input v-model="name" type="text" placeholder="Full name" required/>
         <select v-model="classId" required>
-            <option value="" disabled>Select Option</option>
+            <option value="null">--None--</option>
             <option v-for="c in classes" :key="c.id" :value="c.id">{{ c.name }}</option>
         </select>
         <button type="submit">Add Student</button>
@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+    import { getClasses } from '@/services/api'
     import { ref } from 'vue'
     
     const emit=defineEmits(['add-student'])
@@ -18,13 +19,13 @@
     const classes = ref(getClasses())
     const studentId = ref('')
     const name = ref('')
-    const className = ref('')
+    const classId = ref(null)
 
     function handleSubmit(){
         emit('add-student', {studentId: studentId.value, name: name.value, classId: classId.value})
         studentId.value = ''
         name.value = ''
-        classId.value = ''
+        classId.value = null
     }
 </script>
 
@@ -59,7 +60,8 @@
     }
 
     select {
-        padding: 0;
+        flex: 1;
+        padding: 0.6rem 0.8rem;
         border: 1px solid var(--border);
         background: var(--card);
         color: var(--ink);

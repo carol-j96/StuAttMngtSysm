@@ -3,7 +3,7 @@
   
     <div v-if="student" class="profile">
       <h2>{{ student.name }}</h2>
-      <p class="mono sub">{{ student.studentId }} · {{ student.className }}</p>
+      <p class="mono sub">{{ student.studentId }} · {{ getClassName(student.classId) }}</p>
   
       <h3>Attendance history</h3>
       <table class="ledger card">
